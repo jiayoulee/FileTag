@@ -5,3 +5,4 @@ Our test.data has 1046 blocks, our challenge blocks is 1000. If you modify the t
 Compared to MD5, the proof is only to be transferred.
 In this protect, the tags were computed by the OBU and PDA.
 The tags can enrure that the driving data cannot be modified by the cloud server.
+If you hava any question, you can contact me with :lisong at nufe dot edu dot cn.
