@@ -79,7 +79,7 @@ public class WriteFile {
 	        "\n        atag(HEX)£º\n"+convertor.byte2Hex(AggreTag.toBytes())+
 	        "\n	    blockhash:\n"+blockHashValue1+
 	        "\n--------------------------------------------------------------------------------------------";
-	        File file =new File("_"+fileName+"_FileTag.Sig");
+	        File file =new File("_FileTag.Sig");
 	        if(!file.exists()){
 	        	file.createNewFile();
 	        }
@@ -97,7 +97,7 @@ public class WriteFile {
 	        String content = "\n##totally "+(index)+" blocks##"+
 		    "10 KB size each block##"+
 	        		time+"ms";
-	        File file =new File("_"+fileName+"_FileTag.Sig");
+	        File file =new File("_FileTag.Sig");
 	        if(!file.exists()){
 	        	file.createNewFile();
 	        }
@@ -113,7 +113,7 @@ public class WriteFile {
 		public void writeBegin(String fileName) {
 			try{
 		        String content = "##"+fileName+"##";
-		        File file =new File("_"+fileName+"_FileTag.Sig");
+		        File file =new File("_FileTag.Sig");
 		        if(!file.exists()){
 		        	file.createNewFile();
 		        }

@@ -2,6 +2,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import org.apache.commons.codec.digest.DigestUtils;
 import it.unisa.dia.gas.jpbc.Element;
 import it.unisa.dia.gas.jpbc.ElementPowPreProcessing;
 import it.unisa.dia.gas.jpbc.Pairing;
@@ -16,10 +17,10 @@ import java.math.BigInteger;
 public class Proof {
 	public Element M;
 	public Element Sig;
-	public Proof(Pairing p, HashMap<BigInteger,Element> challInfo,ReadFile tagFile,File dataFile) throws IOException {
+	public Proof(Pairing p, HashMap<BigInteger,Element> challInfo,ReadFile tagFile,String dataFile) throws IOException {
 		M=p.getZr().newZeroElement();
-		BigInteger[] testNums=new BigInteger[1000];
-		Element[] challValue=new Element[1000];
+		BigInteger[] testNums=new BigInteger[Parameter.CHLLAN];
+		Element[] challValue=new Element[Parameter.CHLLAN];
 		BigInteger sequence=new BigInteger("0");
 		int i=0;
 		int len;
@@ -31,18 +32,21 @@ public class Proof {
 				i++;
 			}
 		int j=0;
-		System.out.println(dataFile.getName());
+		System.out.println(dataFile);
 		FileInputStream fs=new FileInputStream(dataFile);
-		byte[] bys = new byte[1024*10];
+		byte[] bys = new byte[Parameter.blockSize];
 		 while ((len = fs.read(bys)) != -1) {
-				for(j=0;j<1000;j++) {
+				for(j=0;j<Parameter.CHLLAN;j++) {
 				if(sequence.equals(testNums[j]))
 				{
-					Element blockHashValue1=p.getZr().newElementFromBytes(bys);
-					//System.out.println(testNums[j]+"#####################"+blockHashValue1);
-					//System.out.println("ch:"+challValue[j]);
-					M=M.add(blockHashValue1.mul(challValue[j]));
-					//System.out.println("temp"+M);
+					
+			    Element blockHashValue=p.getZr().newElementFromBytes(DigestUtils.md5(bys));
+				//	if((sequence.equals(new BigInteger("1045")) || (sequence.equals(new BigInteger("0"))))){
+				//	System.out.println(testNums[j]+"#####################"+blockHashValue1);
+				//	System.out.println("ch:"+challValue[j]);
+				//	}
+					M=M.add(blockHashValue.mul(challValue[j]));
+				//	System.out.println("temp"+M);
 					j++; 
 				}
 				}
@@ -52,7 +56,7 @@ public class Proof {
 	int index;
 	Sig=p.getG1().newZeroElement();
 	//System.out.println("Initial pro:"+Sig);
-	for(int k=0;k<1000;k++) 
+	for(int k=0;k<Parameter.CHLLAN;k++) 
 	{
 		index=testNums[k].intValue();
 		String Hex=tagFile.get_aTag(index);

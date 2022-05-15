@@ -40,11 +40,12 @@ public static void main(String[] args) throws IOException
 			iniSystem.getGenerator(), 
 			UserSecretKey.getImmutable(),
 			OBUsecretKey.getImmutable());
-	 byte[] bys = new byte[1024*10];//1024及其整数倍
+	 byte[] bys = new byte[Parameter.blockSize];//1024及其整数倍
      int len;
      long beginTime=System.currentTimeMillis();
      wf.writeBegin(filePath);
      while ((len = fis.read(bys)) != -1) {
+   // 	System.out.println(len);
      	Element tagUser=signtest.signUser(bys, sequence);
 		Element tagOBU=signtest.signPDA(bys, sequence);
 		Element tagAggre=signtest.sigAggregate(tagUser, tagOBU);
@@ -60,13 +61,14 @@ public static void main(String[] args) throws IOException
      }
      long endTime=System.currentTimeMillis();
      wf.writeEnd(sequence,endTime-beginTime);
-    ReadFile tagFile=new ReadFile("_test.data_FileTag.Sig");
+    fis.close();
+    ReadFile tagFile=new ReadFile("_FileTag.Sig");
     //System.out.println(tagFile.get_aTag(0));
     //System.out.println(tagFile.get_aTag(1000));
-    Challenge chall=new Challenge(1046,1000,iniSystem.getPairing());
+    Challenge chall=new Challenge(tagFile.getBlocksNumber(),Parameter.CHLLAN,iniSystem.getPairing());
     HashMap<BigInteger,Element> chaInfo=chall.selectChallengeNumberBlocks();
-    Proof pro1=new Proof(iniSystem.getPairing(),chaInfo,tagFile,new File(filePath));
-    Proof pro2=new Proof(iniSystem.getPairing(),chaInfo,tagFile,new File(corruption));
+    Proof pro1=new Proof(iniSystem.getPairing(),chaInfo,tagFile,filePath);
+    Proof pro2=new Proof(iniSystem.getPairing(),chaInfo,tagFile,corruption);
     System.out.println("the Proof1 is: ("+pro1.M+"\n"+pro1.Sig+")");
     Verify verifier1=new Verify(iniSystem,chaInfo,pro1);
     boolean result1=verifier1.check(OBUPublicKey, UserPublicKey);
@@ -76,7 +78,7 @@ public static void main(String[] args) throws IOException
     boolean result2=verifier2.check(OBUPublicKey, UserPublicKey);
     System.out.println("The check result is:"+result2);
 		}
-	//fis.close();
+	
 
 	}
 

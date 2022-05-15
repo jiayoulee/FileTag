@@ -19,8 +19,8 @@ public class Verify {
 	Initial iniSystem;
 	HashMap<BigInteger,Element> chall;
 	Proof pro;
-	BigInteger[] testNums=new BigInteger[1000];
-	Element[] challValue=new Element[1000];
+	BigInteger[] testNums=new BigInteger[Parameter.CHLLAN];
+	Element[] challValue=new Element[Parameter.CHLLAN];
 	public Verify(Initial System,HashMap<BigInteger,Element> cha, Proof p) {
 		iniSystem=System;
 		chall=cha;
@@ -36,7 +36,7 @@ public class Verify {
 	}
 	public boolean check(Element PK1, Element PK2) {
 		Element H=iniSystem.getPairing().getG1().newZeroElement();
-		for(int i=0;i<10;i++) {
+		for(int i=0;i<Parameter.CHLLAN;i++) {
 			H=H.add(iniSystem.getPairing().getG1().newElementFromBytes(("TransNo"+testNums[i]).getBytes()).powZn(challValue[i]));
 		}
 		Element H_g_M=H.mul(iniSystem.getGeneratorPre().powZn(pro.M));

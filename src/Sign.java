@@ -3,6 +3,8 @@ import it.unisa.dia.gas.jpbc.ElementPowPreProcessing;
 import it.unisa.dia.gas.jpbc.Pairing;
 import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory;
 import java.math.BigInteger;
+
+import org.apache.commons.codec.digest.DigestUtils;
 public class Sign {
 	private Pairing pairing=null;
 	private ElementPowPreProcessing generator;
@@ -18,8 +20,8 @@ public class Sign {
 		pdaSecretKey=PDAsecretKeySystem;
 	}
 public Element signPDA(byte[] bys, BigInteger sequece) {
-	 Element blockHashValue1=pairing.getZr().newElementFromBytes(bys);
-	 Element g_Pow_Mi1=generator.powZn(blockHashValue1);
+	Element blockHashValue=pairing.getZr().newElementFromBytes(DigestUtils.md5(bys));
+	 Element g_Pow_Mi1=generator.powZn(blockHashValue);
 	 Element H=pairing.getG1().newElementFromBytes(("TransNo"+sequece).getBytes());
 	 Element H_Mul_g_Pow_Mi1=H.mul(g_Pow_Mi1);
 	 Element sig_PDA=H_Mul_g_Pow_Mi1.powZn(pdaSecretKey);
@@ -27,15 +29,15 @@ public Element signPDA(byte[] bys, BigInteger sequece) {
 	 }
 
 public Element signPDAV(byte[] bys, BigInteger sequece) {
-	 Element blockHashValue1=pairing.getZr().newElementFromBytes(bys);
-	 Element g_Pow_Mi1=generator.powZn(blockHashValue1);
+	Element blockHashValue=pairing.getZr().newElementFromBytes(DigestUtils.md5(bys));
+	 Element g_Pow_Mi1=generator.powZn(blockHashValue);
 	 Element hi_Mul_g_Pow_Mi1=g_Pow_Mi1.pow(sequece);
 	// Element sig_PDA=hi_Mul_g_Pow_Mi1.powZn(pdaSecretKey);
 	 return hi_Mul_g_Pow_Mi1;
 	 }
 public Element signUser(byte[] bys, BigInteger sequece) {
-	 Element blockHashValue2=pairing.getZr().newElementFromBytes(bys);
-	 Element g_Pow_Mi2=generator.powZn(blockHashValue2);
+	Element blockHashValue=pairing.getZr().newElementFromBytes(DigestUtils.md5(bys));
+	 Element g_Pow_Mi2=generator.powZn(blockHashValue);
 	 Element H=pairing.getG1().newElementFromBytes(("TransNo"+sequece).getBytes());
 	 Element H_Mul_g_Pow_Mi2=H.mul(g_Pow_Mi2);
 	 Element sig_User=H_Mul_g_Pow_Mi2.powZn(userSecretKey);
